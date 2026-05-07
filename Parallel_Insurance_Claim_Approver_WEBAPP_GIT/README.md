@@ -67,6 +67,9 @@ Parallel_Insurance_Claim_Approver_WEBAPP/
 
 ## Architecture
 
+<img width="1693" height="929" alt="Architecture" src="https://github.com/user-attachments/assets/96c9efe8-61f0-4f7c-ac6f-4b578479c8dc" />
+
+
 ```mermaid
 flowchart TD
     A["User opens Flask web app"] --> B["webPage.index"]
@@ -157,6 +160,20 @@ After all stages complete, Flask renders a styled result page with:
 - Total deduction
 - Risk flags
 - Claim summary
+
+
+
+### Main App Interface
+
+<img width="1918" height="838" alt="Screenshot 2026-05-07 220358" src="https://github.com/user-attachments/assets/9832827a-03e9-40be-8d4c-6b417e848009" />
+
+### Results Interface
+
+<img width="1918" height="835" alt="Screenshot 2026-05-07 220614" src="https://github.com/user-attachments/assets/830a41aa-0e1b-434e-b772-f8da60bbe875" />
+
+<img width="1917" height="867" alt="Screenshot 2026-05-07 220651" src="https://github.com/user-attachments/assets/647c9906-dcb9-428e-82e6-639a4d40085c" />
+
+
 
 ## Routes
 
