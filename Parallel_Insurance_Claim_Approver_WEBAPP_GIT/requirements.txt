@@ -1,0 +1,17 @@
+# Web server
+Flask
+Werkzeug
+
+# LLM client
+openai
+
+# Data processing
+pandas
+python-dateutil
+PyYAML
+
+# PDF parsing and OCR helpers
+PyPDF2
+pdf2image
+Pillow
+pytesseract

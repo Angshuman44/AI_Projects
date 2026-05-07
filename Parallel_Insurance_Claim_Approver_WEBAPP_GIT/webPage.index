@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Insurance Claim Approver</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #08111f;
+      --ink-2: #101b2d;
+      --panel: rgba(255, 255, 255, 0.075);
+      --panel-strong: rgba(255, 255, 255, 0.12);
+      --line: rgba(255, 255, 255, 0.16);
+      --text: #eef5ff;
+      --muted: #a9b8cc;
+      --soft: #d9e7f7;
+      --mint: #76f7cb;
+      --blue: #7ab7ff;
+      --gold: #ffd27a;
+      --rose: #ff8fa3;
+      font-family: "Segoe UI", Inter, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(122, 183, 255, 0.24), transparent 28rem),
+        radial-gradient(circle at 88% 10%, rgba(118, 247, 203, 0.19), transparent 26rem),
+        radial-gradient(circle at 62% 85%, rgba(255, 210, 122, 0.16), transparent 25rem),
+        linear-gradient(135deg, #050914 0%, #0d1727 48%, #07101d 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 78%);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+      position: relative;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0 34px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #06121f;
+      background: linear-gradient(135deg, var(--mint), var(--blue));
+      box-shadow: 0 18px 45px rgba(118, 247, 203, 0.18);
+      font-weight: 900;
+    }
+
+    .nav-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: right;
+    }
+
+    .hero {
+      min-height: 72vh;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      gap: 30px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--soft);
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 18px var(--mint);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 24px 0 20px;
+      font-size: clamp(3.4rem, 8vw, 7.4rem);
+      line-height: 0.92;
+      letter-spacing: -0.06em;
+    }
+
+    h1 span {
+      color: transparent;
+      background: linear-gradient(135deg, #ffffff, var(--blue) 44%, var(--mint));
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .hero-copy {
+      max-width: 620px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      line-height: 1.8;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 620px;
+      margin-top: 34px;
+    }
+
+    .stat {
+      min-height: 106px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.055);
+      backdrop-filter: blur(18px);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.85rem;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .intake-card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      padding: 30px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.135), rgba(255,255,255,0.045)),
+        rgba(8, 17, 31, 0.74);
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(22px);
+      overflow: hidden;
+    }
+
+    .intake-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -80px;
+      top: -90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(118,247,203,0.32), transparent 68%);
+    }
+
+    .card-head,
+    form,
+    .sample-note {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.25rem);
+      letter-spacing: -0.04em;
+    }
+
+    .pill {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(118, 247, 203, 0.12);
+      color: var(--mint);
+      border: 1px solid rgba(118, 247, 203, 0.28);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .upload {
+      display: block;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(3, 9, 20, 0.36);
+    }
+
+    .upload strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+      letter-spacing: 0.03em;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      color: var(--muted);
+      border: 1px dashed rgba(217, 231, 247, 0.28);
+      border-radius: 16px;
+      padding: 13px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    input[type="file"]::file-selector-button {
+      margin-right: 12px;
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: #06121f;
+      background: linear-gradient(135deg, var(--mint), var(--blue));
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      min-height: 56px;
+      border: 0;
+      border-radius: 18px;
+      margin-top: 8px;
+      color: #05111d;
+      background: linear-gradient(135deg, var(--gold), var(--mint) 52%, var(--blue));
+      box-shadow: 0 18px 44px rgba(118, 247, 203, 0.2);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    .sample-note {
+      margin: 18px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.92rem;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+      margin-top: 34px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px;
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+    }
+
+    .panel h2 {
+      margin-bottom: 18px;
+    }
+
+    ol,
+    ul {
+      margin: 0;
+      padding-left: 22px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .doc {
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 22px;
+      padding: 18px;
+      color: #06121f;
+      background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(217,231,247,0.72));
+    }
+
+    .doc b {
+      font-size: 2rem;
+      letter-spacing: -0.05em;
+    }
+
+    .doc span {
+      font-weight: 800;
+    }
+
+    footer {
+      padding: 36px 0 0;
+      color: rgba(217, 231, 247, 0.58);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 28px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      main {
+        width: min(100% - 24px, 1180px);
+        padding-top: 18px;
+      }
+
+      .nav {
+        align-items: flex-start;
+      }
+
+      .nav-meta {
+        font-size: 0.78rem;
+      }
+
+      .hero-stats,
+      .doc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .intake-card,
+      .panel {
+        border-radius: 24px;
+        padding: 22px;
+      }
+
+      .card-head {
+        display: block;
+      }
+
+      .pill {
+        display: inline-block;
+        margin-top: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <nav class="nav" aria-label="Page">
+      <div class="brand">
+        <div class="mark">IC</div>
+        <div>Insurance Claim Approver</div>
+      </div>
+      <div class="nav-meta">Parallel claim intelligence<br>Local Flask review surface</div>
+    </nav>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Document-first approval</div>
+        <h1>Claims reviewed with <span>clarity</span>.</h1>
+        <p class="hero-copy">
+          Upload the claim documents once. The backend reads the evidence, checks the policy context, and returns a decision page with payout, deductions, risk flags, and a concise summary.
+        </p>
+
+        <div class="hero-stats" aria-label="Claim review highlights">
+          <div class="stat">
+            <strong>3</strong>
+            <span>Primary PDFs accepted for each claim review.</span>
+          </div>
+          <div class="stat">
+            <strong>1</strong>
+            <span>Server-rendered result page with no browser scripts.</span>
+          </div>
+          <div class="stat">
+            <strong>0</strong>
+            <span>External assets required for this interface.</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="intake-card" aria-labelledby="run-claim-title">
+        <div class="card-head">
+          <h2 id="run-claim-title">Run Claim</h2>
+          <span class="pill">PDF Intake</span>
+        </div>
+
+        <form action="/claims" method="post" enctype="multipart/form-data">
+          <label class="upload" for="bill">
+            <strong>Hospital bill PDF</strong>
+            <input id="bill" name="bill" type="file" accept="application/pdf">
+          </label>
+
+          <label class="upload" for="pre_auth">
+            <strong>Pre-auth PDF</strong>
+            <input id="pre_auth" name="pre_auth" type="file" accept="application/pdf">
+          </label>
+
+          <label class="upload" for="discharge_summary">
+            <strong>Discharge summary PDF</strong>
+            <input id="discharge_summary" name="discharge_summary" type="file" accept="application/pdf">
+          </label>
+
+          <button type="submit">Run Claim Review</button>
+        </form>
+
+        <p class="sample-note">
+          Leave the file fields empty to run the bundled sample documents. Uploaded PDFs are saved temporarily only for the review request.
+        </p>
+      </section>
+    </section>
+
+    <section class="section-grid" aria-label="Workflow and accepted inputs">
+      <div class="panel">
+        <h2>How It Works</h2>
+        <ol>
+          <li>The app receives the bill, pre-auth form, and discharge summary PDFs.</li>
+          <li>The backend compares the documents with policy, exclusions, medical history, and past claims.</li>
+          <li>The result page shows the final decision, payable amount, deductions, risk flags, and summary.</li>
+        </ol>
+      </div>
+
+      <div class="panel">
+        <h2>Accepted Inputs</h2>
+        <div class="doc-grid">
+          <div class="doc">
+            <b>01</b>
+            <span>Hospital Bill</span>
+          </div>
+          <div class="doc">
+            <b>02</b>
+            <span>Pre-auth Form</span>
+          </div>
+          <div class="doc">
+            <b>03</b>
+            <span>Discharge Summary</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Insurance Claim Approver runs locally and submits directly to the Flask backend.
+    </footer>
+  </main>
+</body>
+</html>
