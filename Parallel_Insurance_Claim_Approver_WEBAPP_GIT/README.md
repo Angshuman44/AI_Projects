@@ -1,6 +1,9 @@
-# Parallel Insurance Claim Approver Web App
+# GenAI-powered Health Insurance Claim Processing
 
-A Flask web application that reviews insurance claim documents through a parallel processing pipeline. The app accepts claim PDFs, extracts structured information, runs policy and medical checks, calculates the payable amount, produces a final decision, and renders a staged progress screen so users are not left waiting blindly.
+An AI-powered Flask web application for automating health insurance claim processing using OCR, Generative AI, and parallel processing pipelines.
+The system extracts structured information from hospital bills, pre-auth forms, and discharge summaries, then performs policy validation, medical checks, PED/history analysis, and claim amount calculation.
+Built with Python, Flask, PyPDF, OCR workflows, and LLM-based reasoning to enable faster, scalable, and automated insurance claim review.
+Policy Handbook and Rules: Niva Bupa
 
 ## What This Project Does
 
